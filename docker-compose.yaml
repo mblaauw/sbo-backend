@@ -1,0 +1,102 @@
+
+services:
+  postgres:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: sbo_user
+      POSTGRES_PASSWORD: sbo_password
+      POSTGRES_DB: sbo_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  skills-service:
+    build:
+      context: .
+      dockerfile: ./services/skills_service/Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://sbo_user:sbo_password@postgres:5432/sbo_db
+      - LLM_SERVICE_URL=http://llm-service:8005
+    ports:
+      - "8001:8000"
+    depends_on:
+      - postgres
+
+  matching-service:
+    build:
+      context: .
+      dockerfile: ./services/matching_service/Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://sbo_user:sbo_password@postgres:5432/sbo_db
+      - SKILLS_SERVICE_URL=http://skills-service:8000
+      - USER_SERVICE_URL=http://user-service:8000
+    ports:
+      - "8002:8000"
+    depends_on:
+      - postgres
+      - skills-service
+
+  user-service:
+    build:
+      context: .
+      dockerfile: ./services/user_service/Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://sbo_user:sbo_password@postgres:5432/sbo_db
+      - SKILLS_SERVICE_URL=http://skills-service:8000
+      - ASSESSMENT_SERVICE_URL=http://assessment-service:8000
+    ports:
+      - "8003:8000"
+    depends_on:
+      - postgres
+
+  assessment-service:
+    build:
+      context: .
+      dockerfile: ./services/assessment_service/Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://sbo_user:sbo_password@postgres:5432/sbo_db
+      - SKILLS_SERVICE_URL=http://skills-service:8000
+      - LLM_SERVICE_URL=http://llm-service:8000
+    ports:
+      - "8004:8000"
+    depends_on:
+      - postgres
+      - skills-service
+      - llm-service
+
+  llm-service:
+    build:
+      context: .
+      dockerfile: ./services/llm_service/Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://sbo_user:sbo_password@postgres:5432/sbo_db
+      - SKILLS_SERVICE_URL=http://skills-service:8000
+      - LLM_API_KEY=${LLM_API_KEY:-dummy-key}
+    ports:
+      - "8005:8000"
+    depends_on:
+      - postgres
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: ./services/api_gateway/Dockerfile
+    environment:
+      - SKILLS_SERVICE_URL=http://skills-service:8000
+      - MATCHING_SERVICE_URL=http://matching-service:8000
+      - USER_SERVICE_URL=http://user-service:8000
+      - ASSESSMENT_SERVICE_URL=http://assessment-service:8000
+      - LLM_SERVICE_URL=http://llm-service:8000
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-dev_secret_key}
+    ports:
+      - "8000:8000"
+    depends_on:
+      - skills-service
+      - matching-service
+      - user-service
+      - assessment-service
+      - llm-service
+
+volumes:
+  postgres_data:

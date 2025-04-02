@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+  namespace: sbo-system
+  labels:
+    app: sbo
+    component: api-gateway
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: sbo
+      component: api-gateway
+  template:
+    metadata:
+      labels:
+        app: sbo
+        component: api-gateway
+    spec:
+      containers:
+      - name: api-gateway
+        image: ${REGISTRY}/sbo-api-gateway:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+        env:
+        - name: SKILLS_SERVICE_URL
+          value: "http://skills-service:8000"
+        - name: MATCHING_SERVICE_URL
+          value: "http://matching-service:8000"
+        - name: USER_SERVICE_URL
+          value: "http://user-service:8000"
+        - name: ASSESSMENT_SERVICE_URL
+          value: "http://assessment-service:8000"
+        - name: LLM_SERVICE_URL
+          value: "http://llm-service:8000"
+        - name: JWT_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: jwt-secret
+              key: token
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+          requests:
+            cpu: "100m"
+            memory: "128Mi"

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-gateway
+  namespace: sbo-system
+spec:
+  selector:
+    app: sbo
+    component: api-gateway
+  ports:
+  - port: 80
+    targetPort: 8000
+  type: ClusterIP
