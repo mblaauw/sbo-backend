@@ -31,7 +31,7 @@ app.add_middleware(
 )
 
 # Skills Service URL
-SKILLS_SERVICE_URL = os.getenv("SKILLS_SERVICE_URL", "http://localhost:8001")
+SKILLS_SERVICE_URL = os.getenv("SKILLS_SERVICE_URL", "http://localhost:8101")
 
 # Endpoint to extract skills from text
 @app.post("/extract-skills", response_model=List[schemas.ExtractedSkill])

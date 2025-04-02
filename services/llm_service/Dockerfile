@@ -6,7 +6,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy service-specific files
-COPY ./llm_service /app/llm_service
+COPY ./services/llm_service /app/llm_service
 
 # Run the service
-CMD ["uvicorn", "llm_service.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "llm_service.main:app", "--host", "0.0.0.0", "--port", "8100"]

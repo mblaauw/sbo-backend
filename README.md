@@ -89,10 +89,10 @@ kubectl apply -f k8s/user-service.yaml
 3. Access the API Gateway:
 
 ```bash
-kubectl port-forward svc/api-gateway 8000:80
+kubectl port-forward svc/api-gateway 8100:80
 ```
 
-The API will be available at http://localhost:8000
+The API will be available at http://localhost:8100
 
 ## API Endpoints
 

@@ -6,7 +6,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy service-specific files
-COPY ./assesment_service /app/assesment_service
+COPY ./services/assessment_service /app/assessment_service
 
 # Run the service
-CMD ["uvicorn", "assesment_service.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "assessment_service.main:app", "--host", "0.0.0.0", "--port", "8100"]

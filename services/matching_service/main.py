@@ -30,8 +30,8 @@ app.add_middleware(
 )
 
 # Skills Service URL
-SKILLS_SERVICE_URL = os.getenv("SKILLS_SERVICE_URL", "http://localhost:8001")
-USER_SERVICE_URL = os.getenv("USER_SERVICE_URL", "http://localhost:8003")
+SKILLS_SERVICE_URL = os.getenv("SKILLS_SERVICE_URL", "http://localhost:8101")
+USER_SERVICE_URL = os.getenv("USER_SERVICE_URL", "http://localhost:8103")
 
 # Initialize with mock data if needed
 @app.on_event("startup")

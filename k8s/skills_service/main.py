@@ -30,7 +30,7 @@ app.add_middleware(
 )
 
 # LLM Service URL
-LLM_SERVICE_URL = os.getenv("LLM_SERVICE_URL", "http://localhost:8005")
+LLM_SERVICE_URL = os.getenv("LLM_SERVICE_URL", "http://localhost:8105")
 
 # Initialize with mock data if needed
 @app.on_event("startup")

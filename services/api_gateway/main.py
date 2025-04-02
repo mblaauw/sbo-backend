@@ -30,11 +30,11 @@ app.add_middleware(
 )
 
 # Service URLs from environment variables
-SKILLS_SERVICE_URL = os.getenv("SKILLS_SERVICE_URL", "http://localhost:8001")
-MATCHING_SERVICE_URL = os.getenv("MATCHING_SERVICE_URL", "http://localhost:8002")
-USER_SERVICE_URL = os.getenv("USER_SERVICE_URL", "http://localhost:8003")
-ASSESSMENT_SERVICE_URL = os.getenv("ASSESSMENT_SERVICE_URL", "http://localhost:8004")
-LLM_SERVICE_URL = os.getenv("LLM_SERVICE_URL", "http://localhost:8005")
+SKILLS_SERVICE_URL = os.getenv("SKILLS_SERVICE_URL", "http://localhost:8101")
+MATCHING_SERVICE_URL = os.getenv("MATCHING_SERVICE_URL", "http://localhost:8102")
+USER_SERVICE_URL = os.getenv("USER_SERVICE_URL", "http://localhost:8103")
+ASSESSMENT_SERVICE_URL = os.getenv("ASSESSMENT_SERVICE_URL", "http://localhost:8104")
+LLM_SERVICE_URL = os.getenv("LLM_SERVICE_URL", "http://localhost:8105")
 
 # Custom OpenAPI docs route
 @app.get("/docs", include_in_schema=False)

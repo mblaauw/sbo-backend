@@ -17,9 +17,9 @@ services:
       dockerfile: ./services/skills_service/Dockerfile
     environment:
       - DATABASE_URL=postgresql://sbo_user:sbo_password@postgres:5432/sbo_db
-      - LLM_SERVICE_URL=http://llm-service:8005
+      - LLM_SERVICE_URL=http://llm-service:8105
     ports:
-      - "8001:8000"
+      - "8101:8100"
     depends_on:
       - postgres
 
@@ -29,10 +29,10 @@ services:
       dockerfile: ./services/matching_service/Dockerfile
     environment:
       - DATABASE_URL=postgresql://sbo_user:sbo_password@postgres:5432/sbo_db
-      - SKILLS_SERVICE_URL=http://skills-service:8000
-      - USER_SERVICE_URL=http://user-service:8000
+      - SKILLS_SERVICE_URL=http://skills-service:8100
+      - USER_SERVICE_URL=http://user-service:8100
     ports:
-      - "8002:8000"
+      - "8102:8100"
     depends_on:
       - postgres
       - skills-service
@@ -43,10 +43,10 @@ services:
       dockerfile: ./services/user_service/Dockerfile
     environment:
       - DATABASE_URL=postgresql://sbo_user:sbo_password@postgres:5432/sbo_db
-      - SKILLS_SERVICE_URL=http://skills-service:8000
-      - ASSESSMENT_SERVICE_URL=http://assessment-service:8000
+      - SKILLS_SERVICE_URL=http://skills-service:8100
+      - ASSESSMENT_SERVICE_URL=http://assessment-service:8100
     ports:
-      - "8003:8000"
+      - "8103:8100"
     depends_on:
       - postgres
 
@@ -56,10 +56,10 @@ services:
       dockerfile: ./services/assessment_service/Dockerfile
     environment:
       - DATABASE_URL=postgresql://sbo_user:sbo_password@postgres:5432/sbo_db
-      - SKILLS_SERVICE_URL=http://skills-service:8000
-      - LLM_SERVICE_URL=http://llm-service:8000
+      - SKILLS_SERVICE_URL=http://skills-service:8100
+      - LLM_SERVICE_URL=http://llm-service:8100
     ports:
-      - "8004:8000"
+      - "8104:8100"
     depends_on:
       - postgres
       - skills-service
@@ -71,10 +71,10 @@ services:
       dockerfile: ./services/llm_service/Dockerfile
     environment:
       - DATABASE_URL=postgresql://sbo_user:sbo_password@postgres:5432/sbo_db
-      - SKILLS_SERVICE_URL=http://skills-service:8000
+      - SKILLS_SERVICE_URL=http://skills-service:8100
       - LLM_API_KEY=${LLM_API_KEY:-dummy-key}
     ports:
-      - "8005:8000"
+      - "8105:8100"
     depends_on:
       - postgres
 
@@ -83,14 +83,14 @@ services:
       context: .
       dockerfile: ./services/api_gateway/Dockerfile
     environment:
-      - SKILLS_SERVICE_URL=http://skills-service:8000
-      - MATCHING_SERVICE_URL=http://matching-service:8000
-      - USER_SERVICE_URL=http://user-service:8000
-      - ASSESSMENT_SERVICE_URL=http://assessment-service:8000
-      - LLM_SERVICE_URL=http://llm-service:8000
+      - SKILLS_SERVICE_URL=http://skills-service:8100
+      - MATCHING_SERVICE_URL=http://matching-service:8100
+      - USER_SERVICE_URL=http://user-service:8100
+      - ASSESSMENT_SERVICE_URL=http://assessment-service:8100
+      - LLM_SERVICE_URL=http://llm-service:8100
       - JWT_SECRET_KEY=${JWT_SECRET_KEY:-dev_secret_key}
     ports:
-      - "8000:8000"
+      - "8101:8101"
     depends_on:
       - skills-service
       - matching-service
