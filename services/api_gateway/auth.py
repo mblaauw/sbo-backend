@@ -1,8 +1,8 @@
-# services/api_gateway/auth.py
+# api_gateway/auth.py
 from fastapi.security import OAuth2PasswordBearer
 from fastapi import HTTPException, status
 from typing import Dict, Any
-import jwt
+from jose import jwt
 from datetime import datetime, timedelta
 import os
 
@@ -15,7 +15,9 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 def create_access_token(data: Dict[str, Any]) -> str:
-    """Create a JWT access token with an expiration time."""
+    """
+    Create a JWT access token with an expiration time.
+    """
     to_encode = data.copy()
     expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
@@ -23,7 +25,9 @@ def create_access_token(data: Dict[str, Any]) -> str:
     return encoded_jwt
 
 def get_current_user(token: str) -> Dict[str, Any]:
-    """Validate the JWT token and return the user information."""
+    """
+    Validate the JWT token and return the user information.
+    """
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",

@@ -23,18 +23,18 @@ spec:
         image: ${REGISTRY}/sbo-api-gateway:latest
         imagePullPolicy: Always
         ports:
-        - containerPort: 8100
+        - containerPort: 8800
         env:
         - name: SKILLS_SERVICE_URL
-          value: "http://skills-service:8100"
+          value: "http://skills-service:8800"
         - name: MATCHING_SERVICE_URL
-          value: "http://matching-service:8100"
+          value: "http://matching-service:8800"
         - name: USER_SERVICE_URL
-          value: "http://user-service:8100"
+          value: "http://user-service:8800"
         - name: ASSESSMENT_SERVICE_URL
-          value: "http://assessment-service:8100"
+          value: "http://assessment-service:8800"
         - name: LLM_SERVICE_URL
-          value: "http://llm-service:8100"
+          value: "http://llm-service:8800"
         - name: JWT_SECRET_KEY
           valueFrom:
             secretKeyRef:

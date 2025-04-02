@@ -30,7 +30,7 @@ app.add_middleware(
 )
 
 # LLM Service URL
-LLM_SERVICE_URL = os.getenv("LLM_SERVICE_URL", "http://localhost:8105")
+LLM_SERVICE_URL = os.getenv("LLM_SERVICE_URL", "http://localhost:8805")
 
 # Initialize with mock data if needed
 @app.on_event("startup")
@@ -207,7 +207,7 @@ class SkillCategory(SkillCategoryBase):
     id: int
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class SkillBase(BaseModel):
     name: str
@@ -222,7 +222,7 @@ class Skill(SkillBase):
     id: int
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class TextData(BaseModel):
     text: str

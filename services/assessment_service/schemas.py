@@ -1,3 +1,4 @@
+# assessment_service/schemas.py
 from pydantic import BaseModel
 from typing import List, Dict, Any, Optional
 from datetime import datetime
@@ -15,7 +16,7 @@ class AssessmentQuestionDetail(AssessmentQuestionBase):
     id: int
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class AssessmentBase(BaseModel):
     title: str
@@ -31,7 +32,7 @@ class Assessment(AssessmentBase):
     created_at: Optional[datetime] = None
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class AssessmentDetail(Assessment):
     questions: List[AssessmentQuestionDetail]
@@ -59,7 +60,7 @@ class AssessmentResult(BaseModel):
     completed_at: datetime
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class AssessmentResultSummary(BaseModel):
     id: int
@@ -71,7 +72,7 @@ class AssessmentResultSummary(BaseModel):
     completed_at: datetime
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class UserAssessmentResult(BaseModel):
     user_id: int
@@ -80,4 +81,4 @@ class UserAssessmentResult(BaseModel):
     completed_at: datetime
     
     class Config:
-        orm_mode = True
+        from_attributes = True

@@ -9,5 +9,5 @@ spec:
     component: api-gateway
   ports:
   - port: 80
-    targetPort: 8100
+    targetPort: 8800
   type: ClusterIP

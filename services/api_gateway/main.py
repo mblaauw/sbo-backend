@@ -17,7 +17,7 @@ app = FastAPI(
     title="Skills Based Organization - API Gateway",
     description="Gateway for SBO microservices",
     version="0.1.0",
-    docs_url=None  # We'll customize the docs page
+    #docs_url=None  # We'll customize the docs page
 )
 
 # Configure CORS
@@ -30,11 +30,11 @@ app.add_middleware(
 )
 
 # Service URLs from environment variables
-SKILLS_SERVICE_URL = os.getenv("SKILLS_SERVICE_URL", "http://localhost:8101")
-MATCHING_SERVICE_URL = os.getenv("MATCHING_SERVICE_URL", "http://localhost:8102")
-USER_SERVICE_URL = os.getenv("USER_SERVICE_URL", "http://localhost:8103")
-ASSESSMENT_SERVICE_URL = os.getenv("ASSESSMENT_SERVICE_URL", "http://localhost:8104")
-LLM_SERVICE_URL = os.getenv("LLM_SERVICE_URL", "http://localhost:8105")
+SKILLS_SERVICE_URL = os.getenv("SKILLS_SERVICE_URL", "http://localhost:8801")
+MATCHING_SERVICE_URL = os.getenv("MATCHING_SERVICE_URL", "http://localhost:8802")
+USER_SERVICE_URL = os.getenv("USER_SERVICE_URL", "http://localhost:8803")
+ASSESSMENT_SERVICE_URL = os.getenv("ASSESSMENT_SERVICE_URL", "http://localhost:8804")
+LLM_SERVICE_URL = os.getenv("LLM_SERVICE_URL", "http://localhost:8805")
 
 # Custom OpenAPI docs route
 @app.get("/docs", include_in_schema=False)
@@ -296,47 +296,3 @@ async def get_role_dashboard(role_id: int, token: str = Depends(oauth2_scheme)):
         except httpx.RequestError as e:
             raise HTTPException(status_code=503, detail=f"Service unavailable: {str(e)}")
 
-# api_gateway/auth.py
-from fastapi.security import OAuth2PasswordBearer
-from fastapi import HTTPException, status
-from typing import Dict, Any
-import jwt
-from datetime import datetime, timedelta
-import os
-
-# OAuth2 setup
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
-# JWT configuration
-SECRET_KEY = os.getenv("JWT_SECRET_KEY", "dev_secret_key")
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
-
-def create_access_token(data: Dict[str, Any]) -> str:
-    """
-    Create a JWT access token with an expiration time.
-    """
-    to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
-
-def get_current_user(token: str) -> Dict[str, Any]:
-    """
-    Validate the JWT token and return the user information.
-    """
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_id: str = payload.get("sub")
-        if user_id is None:
-            raise credentials_exception
-        return {"user_id": user_id, "role": payload.get("role", "user")}
-    except jwt.PyJWTError:
-        raise credentials_exception

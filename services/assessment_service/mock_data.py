@@ -1,3 +1,4 @@
+# assessment_service/mock_data.py
 def generate_mock_assessments():
     """Generate mock assessment data for the assessment service"""
     

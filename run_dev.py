@@ -12,22 +12,22 @@ from concurrent.futures import ThreadPoolExecutor
 
 # Service configurations - updated for services/ directory structure
 services = [
-    {"name": "skills_service", "port": 8101, "module": "services.skills_service.main:app"},
-    {"name": "matching_service", "port": 8102, "module": "services.matching_service.main:app"},
-    {"name": "user_service", "port": 8103, "module": "services.user_service.main:app"},
-    {"name": "assessment_service", "port": 8104, "module": "services.assessment_service.main:app"},
-    {"name": "llm_service", "port": 8105, "module": "services.llm_service.main:app"},
-    {"name": "api_gateway", "port": 8100, "module": "services.api_gateway.main:app"},
+    {"name": "skills_service", "port": 8801, "module": "services.skills_service.main:app"},
+    {"name": "matching_service", "port": 8802, "module": "services.matching_service.main:app"},
+    {"name": "user_service", "port": 8803, "module": "services.user_service.main:app"},
+    {"name": "assessment_service", "port": 8804, "module": "services.assessment_service.main:app"},
+    {"name": "llm_service", "port": 8805, "module": "services.llm_service.main:app"},
+    {"name": "api_gateway", "port": 8800, "module": "services.api_gateway.main:app"},
 ]
 
 # Environment variables for inter-service communication
 env_vars = {
-    "SKILLS_SERVICE_URL": "http://localhost:8101",
-    "MATCHING_SERVICE_URL": "http://localhost:8102",
-    "USER_SERVICE_URL": "http://localhost:8103",
-    "ASSESSMENT_SERVICE_URL": "http://localhost:8104",
-    "LLM_SERVICE_URL": "http://localhost:8105",
-    "API_GATEWAY_URL": "http://localhost:8100",
+    "SKILLS_SERVICE_URL": "http://localhost:8801",
+    "MATCHING_SERVICE_URL": "http://localhost:8802",
+    "USER_SERVICE_URL": "http://localhost:8803",
+    "ASSESSMENT_SERVICE_URL": "http://localhost:8804",
+    "LLM_SERVICE_URL": "http://localhost:8805",
+    "API_GATEWAY_URL": "http://localhost:8800",
     "DATABASE_URL": "sqlite:///./data/sbo.db",  # Use a data directory
     "JWT_SECRET_KEY": "dev_secret_key",
     "PYTHONPATH": os.path.dirname(os.path.abspath(__file__))  # Add project root to PYTHONPATH
@@ -96,7 +96,7 @@ def main():
     time.sleep(2)
     
     print("\nAll services started!")
-    print("Access API Gateway at http://localhost:8100")
+    print("Access API Gateway at http://localhost:8800")
     print("Press Ctrl+C to stop all services")
     
     try:

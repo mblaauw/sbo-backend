@@ -9,4 +9,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY ./services/matching_service /app/matching_service
 
 # Run the service
-CMD ["uvicorn", "matching_service.main:app", "--host", "0.0.0.0", "--port", "8100"]
+CMD ["uvicorn", "matching_service.main:app", "--host", "0.0.0.0", "--port", "8800"]

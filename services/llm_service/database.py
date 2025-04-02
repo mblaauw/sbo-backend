@@ -1,18 +1,19 @@
+# llm_service/database.py
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
 
-# Get database URL from environment or use a default
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./service_name.db")
+# Get database URL from environment or use a default for development
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./llm_service.db")
 
-# Create engine
+# Create SQLAlchemy engine
 engine = create_engine(DATABASE_URL)
 
-# Create session factory
+# Create SessionLocal class
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Create base class for models
+# Create Base class
 Base = declarative_base()
 
 # Database dependency

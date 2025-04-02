@@ -1,3 +1,4 @@
+# assessment_service/models.py
 from sqlalchemy import Column, ForeignKey, Integer, String, Text, Float, DateTime, ARRAY, JSON
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func

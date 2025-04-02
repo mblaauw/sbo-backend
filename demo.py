@@ -31,8 +31,8 @@ app.add_middleware(
 )
 
 # Service URLs
-SKILLS_SERVICE_URL = os.getenv("SKILLS_SERVICE_URL", "http://localhost:8101")
-ASSESSMENT_SERVICE_URL = os.getenv("ASSESSMENT_SERVICE_URL", "http://localhost:8104")
+SKILLS_SERVICE_URL = os.getenv("SKILLS_SERVICE_URL", "http://localhost:8801")
+ASSESSMENT_SERVICE_URL = os.getenv("ASSESSMENT_SERVICE_URL", "http://localhost:8804")
 
 # Initialize with mock data if needed
 @app.on_event("startup")
@@ -503,7 +503,7 @@ class User(UserBase):
     created_at: datetime
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class UserSkillBase(BaseModel):
     skill_id: int
@@ -521,7 +521,7 @@ class UserSkillDetail(UserSkillBase):
     last_verified: Optional[datetime] = None
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class UserDetail(User):
     skills: List[UserSkillDetail]
@@ -537,7 +537,7 @@ class UserWithSkill(BaseModel):
     source: str
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # user_service/database.py
 from sqlalchemy import create_engine
