@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: sbo_user
+      POSTGRES_PASSWORD: sbo_password
+      POSTGRES_DB: sbo_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sbo_user -d sbo_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  sbo-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://sbo_user:sbo_password@postgres:5432/sbo_db
+      - SERVICE_HOST=0.0.0.0
+      - SERVICE_PORT=8800
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-dev_secret_key}
+      - ENVIRONMENT=${ENVIRONMENT:-development}
+      - DEBUG=${DEBUG:-false}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    ports:
+      - "8800:8800"  # External port for host access
+    volumes:
+      - ./config.py:/app/config.py
+      - ./database.py:/app/database.py
+      - ./middleware.py:/app/middleware.py
+      - ./models.py:/app/models.py
+      - ./schemas.py:/app/schemas.py
+      - ./main.py:/app/main.py
+      - ./init_mock_data.py:/app/init_mock_data.py
+      - ./routes:/app/routes
+      - ./utils:/app/utils
+      - ./mock_data:/app/mock_data
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: >
+      bash -c "
+        # Wait for postgres to be ready
+        echo 'Waiting for PostgreSQL...'
+        sleep 5
+        
+        # Initialize database
+        python -c 'from database import init_db; from init_mock_data import init_mock_data_if_needed; from database import get_db; init_db(); db = next(get_db()); init_mock_data_if_needed(db); db.close()'
+        
+        # Start application
+        exec uvicorn main:app --host 0.0.0.0 --port 8800 --reload
+      "
+
+volumes:
+  postgres_data:

@@ -1,0 +1,134 @@
+{
+    "general": [
+      {
+        "type": "course",
+        "name": "Introduction to {skill}",
+        "provider": "Coursera",
+        "duration": "8 hours"
+      },
+      {
+        "type": "book",
+        "name": "{skill} Fundamentals",
+        "author": "Dr. James Williams",
+        "pages": 320
+      },
+      {
+        "type": "project",
+        "name": "Hands-on {skill} Project",
+        "description": "Apply {skill} concepts to solve a real-world problem",
+        "estimated_hours": 25
+      },
+      {
+        "type": "workshop",
+        "name": "{skill} Workshop",
+        "provider": "LinkedIn Learning",
+        "duration": "6 hours"
+      }
+    ],
+    "technical": [
+      {
+        "type": "course",
+        "name": "Complete {skill} Bootcamp",
+        "provider": "Udemy",
+        "duration": "30 hours"
+      },
+      {
+        "type": "documentation",
+        "name": "Official {skill} Documentation",
+        "url": "docs.example.com/{skill}",
+        "format": "online"
+      },
+      {
+        "type": "github",
+        "name": "{skill} Sample Repository",
+        "description": "Code examples and practice exercises for {skill}",
+        "estimated_hours": 15
+      },
+      {
+        "type": "certification",
+        "name": "Certified {skill} Professional",
+        "provider": "Industry Association",
+        "preparation_hours": 40
+      }
+    ],
+    "leadership": [
+      {
+        "type": "course",
+        "name": "Advanced {skill} for Leaders",
+        "provider": "Harvard Business School Online",
+        "duration": "12 hours"
+      },
+      {
+        "type": "book",
+        "name": "Strategic {skill}",
+        "author": "Dr. Sarah Johnson",
+        "pages": 280
+      },
+      {
+        "type": "mentorship",
+        "name": "{skill} Mentorship Program",
+        "description": "One-on-one guidance from experienced leaders",
+        "duration": "3 months"
+      }
+    ],
+    "communication": [
+      {
+        "type": "workshop",
+        "name": "Effective {skill} Workshop",
+        "provider": "Communication Institute",
+        "duration": "16 hours"
+      },
+      {
+        "type": "practice",
+        "name": "{skill} Practice Group",
+        "description": "Weekly group sessions to practice {skill} techniques",
+        "duration": "8 weeks"
+      },
+      {
+        "type": "course",
+        "name": "{skill} Masterclass",
+        "provider": "Toastmasters International",
+        "duration": "10 hours"
+      }
+    ],
+    "project_management": [
+      {
+        "type": "certification",
+        "name": "Professional {skill} Certification",
+        "provider": "Project Management Institute",
+        "preparation_hours": 35
+      },
+      {
+        "type": "course",
+        "name": "Agile {skill} Methods",
+        "provider": "Scrum Alliance",
+        "duration": "14 hours"
+      },
+      {
+        "type": "simulation",
+        "name": "{skill} Simulation Exercise",
+        "description": "Interactive simulation of project challenges",
+        "estimated_hours": 8
+      }
+    ],
+    "advanced": [
+      {
+        "type": "mentorship",
+        "name": "Expert Mentorship Program",
+        "description": "One-on-one guidance from industry experts",
+        "duration": "3 months"
+      },
+      {
+        "type": "workshop",
+        "name": "Advanced Application Workshop",
+        "provider": "Professional Association",
+        "duration": "20 hours"
+      },
+      {
+        "type": "conference",
+        "name": "Industry Conference",
+        "description": "Annual conference featuring latest developments and networking",
+        "duration": "3 days"
+      }
+    ]
+  }

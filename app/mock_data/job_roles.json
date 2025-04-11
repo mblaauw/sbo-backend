@@ -1,0 +1,63 @@
+[
+    {
+      "title": "Senior Software Engineer",
+      "description": "Design and develop scalable applications using modern software practices.",
+      "department": "Engineering",
+      "required_skills": [
+        {"skill_id": 11, "importance": 0.9, "minimum_proficiency": 4},
+        {"skill_id": 14, "importance": 0.7, "minimum_proficiency": 3},
+        {"skill_id": 13, "importance": 0.6, "minimum_proficiency": 3},
+        {"skill_id": 7, "importance": 0.5, "minimum_proficiency": 3},
+        {"skill_id": 4, "importance": 0.4, "minimum_proficiency": 3}
+      ]
+    },
+    {
+      "title": "Data Scientist",
+      "description": "Analyze data to extract insights and build predictive models.",
+      "department": "Data Science",
+      "required_skills": [
+        {"skill_id": 12, "importance": 0.9, "minimum_proficiency": 4},
+        {"skill_id": 11, "importance": 0.8, "minimum_proficiency": 4},
+        {"skill_id": 6, "importance": 0.8, "minimum_proficiency": 4},
+        {"skill_id": 8, "importance": 0.7, "minimum_proficiency": 4},
+        {"skill_id": 9, "importance": 0.7, "minimum_proficiency": 4}
+      ]
+    },
+    {
+      "title": "Product Manager",
+      "description": "Oversee product development from conception to launch.",
+      "department": "Product",
+      "required_skills": [
+        {"skill_id": 16, "importance": 0.8, "minimum_proficiency": 4},
+        {"skill_id": 18, "importance": 0.8, "minimum_proficiency": 4},
+        {"skill_id": 1, "importance": 0.7, "minimum_proficiency": 4},
+        {"skill_id": 5, "importance": 0.7, "minimum_proficiency": 4},
+        {"skill_id": 4, "importance": 0.6, "minimum_proficiency": 3}
+      ]
+    },
+    {
+      "title": "Marketing Specialist",
+      "description": "Develop and implement marketing campaigns.",
+      "department": "Marketing",
+      "required_skills": [
+        {"skill_id": 2, "importance": 0.9, "minimum_proficiency": 4},
+        {"skill_id": 4, "importance": 0.8, "minimum_proficiency": 4},
+        {"skill_id": 16, "importance": 0.6, "minimum_proficiency": 3},
+        {"skill_id": 18, "importance": 0.5, "minimum_proficiency": 3},
+        {"skill_id": 12, "importance": 0.4, "minimum_proficiency": 2}
+      ]
+    },
+    {
+      "title": "Project Manager",
+      "description": "Lead projects from initiation to completion within constraints.",
+      "department": "Operations",
+      "required_skills": [
+        {"skill_id": 18, "importance": 0.9, "minimum_proficiency": 4},
+        {"skill_id": 19, "importance": 0.8, "minimum_proficiency": 4},
+        {"skill_id": 20, "importance": 0.8, "minimum_proficiency": 4},
+        {"skill_id": 15, "importance": 0.7, "minimum_proficiency": 3},
+        {"skill_id": 17, "importance": 0.7, "minimum_proficiency": 4},
+        {"skill_id": 1, "importance": 0.6, "minimum_proficiency": 3}
+      ]
+    }
+  ]

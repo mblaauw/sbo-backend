@@ -1,0 +1,51 @@
+{
+    "skills": [
+      "Python",
+      "JavaScript",
+      "SQL",
+      "Data Analysis",
+      "Machine Learning",
+      "Project Management",
+      "Leadership",
+      "Communication",
+      "Marketing",
+      "Sales",
+      "Customer Service",
+      "Problem Solving",
+      "Java",
+      "C++",
+      "Cloud Computing",
+      "AWS",
+      "Azure",
+      "Product Management"
+    ],
+    "job_titles": [
+      "Software Engineer",
+      "Data Analyst",
+      "Product Manager",
+      "Project Manager",
+      "Marketing Specialist",
+      "Sales Representative",
+      "Systems Administrator",
+      "Cloud Architect",
+      "Full Stack Developer",
+      "UX Designer",
+      "Business Analyst",
+      "DevOps Engineer"
+    ],
+    "skill_to_role_map": {
+      "Python": ["Software Engineer", "Data Scientist", "Backend Developer"],
+      "JavaScript": ["Frontend Developer", "Web Developer", "Full Stack Engineer"],
+      "SQL": ["Database Administrator", "Data Analyst", "Business Intelligence Analyst"],
+      "Data Analysis": ["Data Analyst", "Business Analyst", "Data Scientist"],
+      "Machine Learning": ["Machine Learning Engineer", "Data Scientist", "AI Researcher"],
+      "Project Management": ["Project Manager", "Program Manager", "Scrum Master"],
+      "Leadership": ["Team Lead", "Manager", "Director"],
+      "Marketing": ["Marketing Specialist", "Brand Manager", "Digital Marketer"],
+      "Sales": ["Sales Representative", "Account Executive", "Business Development Manager"],
+      "Cloud Computing": ["Cloud Architect", "DevOps Engineer", "Systems Engineer"],
+      "AWS": ["AWS Solutions Architect", "Cloud Engineer", "DevOps Engineer"],
+      "Java": ["Java Developer", "Backend Engineer", "Enterprise Application Developer"],
+      "C++": ["C++ Developer", "Game Developer", "Systems Programmer"]
+    }
+  }

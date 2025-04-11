@@ -1,0 +1,151 @@
+{
+    "categories": [
+      {
+        "id": 1,
+        "name": "Communication",
+        "description": "Skills related to verbal and written communication"
+      },
+      {
+        "id": 2,
+        "name": "Cognitive",
+        "description": "Skills related to thinking and problem solving"
+      },
+      {
+        "id": 3,
+        "name": "Technical",
+        "description": "Technical and specialized skills"
+      },
+      {
+        "id": 4,
+        "name": "Leadership",
+        "description": "Skills related to managing people and projects"
+      },
+      {
+        "id": 5,
+        "name": "Project Management",
+        "description": "Skills related to project planning and execution"
+      }
+    ],
+    "skills": [
+      {
+        "name": "Speaking",
+        "description": "Ability to verbally communicate information clearly",
+        "statement": "I can tell something in a way that people understand me.",
+        "category_id": 1
+      },
+      {
+        "name": "Persuasive Speaking",
+        "description": "Ability to influence or inform an audience",
+        "statement": "I can speak persuasively to influence or inform an audience.",
+        "category_id": 1
+      },
+      {
+        "name": "Voice Modulation",
+        "description": "Ability to adapt voice and intonation to convey emotions",
+        "statement": "I can adapt my voice and intonation to effectively convey emotions and intentions.",
+        "category_id": 1
+      },
+      {
+        "name": "Information Documentation",
+        "description": "Ability to write information so others can understand it",
+        "statement": "I can document data so that other people understand it.",
+        "category_id": 1
+      },
+      {
+        "name": "Active Listening",
+        "description": "Ability to listen and summarize what was said",
+        "statement": "I can listen to a conversation and ask targeted questions to gain more information.",
+        "category_id": 1
+      },
+      {
+        "name": "Numeracy",
+        "description": "Ability to work with numbers and solve numerical problems",
+        "statement": "I can calculate and solve problems with numbers.",
+        "category_id": 2
+      },
+      {
+        "name": "Rule Application",
+        "description": "Ability to apply learned rules to solve problems",
+        "statement": "I can use rules I've learned to solve problems.",
+        "category_id": 2
+      },
+      {
+        "name": "Scientific Method",
+        "description": "Ability to design and conduct experiments",
+        "statement": "I can design and conduct experiments to investigate questions.",
+        "category_id": 2
+      },
+      {
+        "name": "Data Validation",
+        "description": "Ability to assess data reliability",
+        "statement": "I can evaluate the reliability of data before using it in my analysis.",
+        "category_id": 2
+      },
+      {
+        "name": "Reading Comprehension",
+        "description": "Ability to read and understand written text",
+        "statement": "I can read and understand written text.",
+        "category_id": 2
+      },
+      {
+        "name": "Python Programming",
+        "description": "Ability to develop applications using Python",
+        "statement": "I can develop applications in Python.",
+        "category_id": 3
+      },
+      {
+        "name": "Data Analysis",
+        "description": "Ability to analyze datasets and extract insights",
+        "statement": "I can analyze large datasets and extract meaningful insights.",
+        "category_id": 3
+      },
+      {
+        "name": "Cloud Infrastructure",
+        "description": "Ability to deploy and manage cloud resources",
+        "statement": "I can deploy and manage infrastructure in cloud environments.",
+        "category_id": 3
+      },
+      {
+        "name": "SQL",
+        "description": "Ability to query and manipulate databases using SQL",
+        "statement": "I can write SQL queries to retrieve and manipulate data.",
+        "category_id": 3
+      },
+      {
+        "name": "Team Leadership",
+        "description": "Ability to lead and motivate a team",
+        "statement": "I can lead and motivate a team to achieve objectives.",
+        "category_id": 4
+      },
+      {
+        "name": "Strategic Thinking",
+        "description": "Ability to develop and implement strategies",
+        "statement": "I can develop and implement strategic plans.",
+        "category_id": 4
+      },
+      {
+        "name": "Conflict Resolution",
+        "description": "Ability to resolve conflicts between team members",
+        "statement": "I can help resolve conflicts between team members.",
+        "category_id": 4
+      },
+      {
+        "name": "Task Planning",
+        "description": "Ability to break down projects into tasks",
+        "statement": "I can break down projects into manageable tasks.",
+        "category_id": 5
+      },
+      {
+        "name": "Resource Allocation",
+        "description": "Ability to allocate resources effectively",
+        "statement": "I can allocate resources effectively to maximize productivity.",
+        "category_id": 5
+      },
+      {
+        "name": "Risk Management",
+        "description": "Ability to identify and mitigate project risks",
+        "statement": "I can identify and mitigate risks in projects.",
+        "category_id": 5
+      }
+    ]
+  }

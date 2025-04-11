@@ -1,0 +1,166 @@
+[
+    {
+      "title": "Python Programming Assessment",
+      "description": "Evaluation of Python programming skills",
+      "skill_id": 11,
+      "difficulty_level": "medium",
+      "questions": [
+        {
+          "question_text": "What is the output of the following code? 'print([x for x in range(5) if x % 2 == 0])'",
+          "options": [
+            "[0, 2, 4]",
+            "[0, 1, 2, 3, 4]",
+            "[1, 3]",
+            "[2, 4]"
+          ],
+          "correct_answer_index": 0,
+          "explanation": "This list comprehension filters the range by keeping only even numbers, which are those divisible by 2 with no remainder."
+        },
+        {
+          "question_text": "Which of the following is NOT a built-in data type in Python?",
+          "options": [
+            "List",
+            "Dictionary",
+            "Array",
+            "Tuple"
+          ],
+          "correct_answer_index": 2,
+          "explanation": "Array is not a built-in data type in Python. It requires the 'array' module or NumPy to use arrays. The built-in sequence types are lists, tuples, and strings."
+        },
+        {
+          "question_text": "What is the purpose of the __init__ method in Python?",
+          "options": [
+            "To initialize a new instance of a class",
+            "To import modules when script starts",
+            "To initialize the Python interpreter",
+            "To define static methods"
+          ],
+          "correct_answer_index": 0,
+          "explanation": "The __init__ method in Python is a special method (constructor) that is automatically called when a new instance of a class is created, used to initialize the object's attributes."
+        }
+      ]
+    },
+    {
+      "title": "Data Analysis Fundamentals",
+      "description": "Assessment to evaluate data analysis capabilities",
+      "skill_id": 12,
+      "difficulty_level": "medium",
+      "questions": [
+        {
+          "question_text": "What type of chart is best for showing the distribution of a single variable?",
+          "options": [
+            "Pie chart",
+            "Scatter plot",
+            "Histogram",
+            "Line chart"
+          ],
+          "correct_answer_index": 2,
+          "explanation": "Histograms are designed to show the distribution of a single variable, displaying the frequency of data points across different ranges or bins."
+        },
+        {
+          "question_text": "When analyzing skewed data, which measure of central tendency is most appropriate?",
+          "options": [
+            "Mean",
+            "Median",
+            "Mode",
+            "Range"
+          ],
+          "correct_answer_index": 1,
+          "explanation": "The median is less affected by outliers and skewed distributions than the mean, making it more representative of the center for skewed data."
+        },
+        {
+          "question_text": "What is the key difference between correlation and causation?",
+          "options": [
+            "Correlation is weaker than causation",
+            "Correlation is always positive, causation can be negative",
+            "Correlation means two variables are related, causation means one variable causes the other",
+            "They are different terms for the same concept"
+          ],
+          "correct_answer_index": 2,
+          "explanation": "Correlation indicates a relationship or association between variables, while causation specifically means that changes in one variable directly cause changes in another."
+        }
+      ]
+    },
+    {
+      "title": "Effective Communication",
+      "description": "Assessment to evaluate communication skills",
+      "skill_id": 1,
+      "difficulty_level": "easy",
+      "questions": [
+        {
+          "question_text": "What is the most effective way to communicate technical information to a non-technical audience?",
+          "options": [
+            "Use technical jargon to sound professional",
+            "Use simple language and analogies",
+            "Provide detailed technical specifications",
+            "Speak quickly to maintain interest"
+          ],
+          "correct_answer_index": 1,
+          "explanation": "When communicating with a non-technical audience, using simple language and analogies helps them understand complex concepts without requiring specialized knowledge."
+        },
+        {
+          "question_text": "Which of these is an example of active listening?",
+          "options": [
+            "Planning what you'll say next while the other person is speaking",
+            "Looking at your phone occasionally during a conversation",
+            "Interrupting to correct inaccuracies",
+            "Paraphrasing what the speaker said to confirm understanding"
+          ],
+          "correct_answer_index": 3,
+          "explanation": "Active listening involves fully engaging with the speaker and demonstrating understanding, such as by paraphrasing their points."
+        },
+        {
+          "question_text": "What communication approach is most appropriate when delivering negative feedback?",
+          "options": [
+            "Be direct and critical to ensure the message is clear",
+            "Use a sandwich approach: positive-negative-positive",
+            "Send feedback via email to avoid confrontation",
+            "Focus only on what went wrong"
+          ],
+          "correct_answer_index": 1,
+          "explanation": "The sandwich approach helps deliver constructive criticism in a way that's easier to receive and act upon."
+        }
+      ]
+    },
+    {
+      "title": "Project Management Essentials",
+      "description": "Assessment of core project management skills",
+      "skill_id": 18,
+      "difficulty_level": "medium",
+      "questions": [
+        {
+          "question_text": "What is the critical path in project management?",
+          "options": [
+            "The most expensive sequence of tasks",
+            "The sequence of tasks that must be completed on time for the project to finish on schedule",
+            "The tasks assigned to the most critical team members",
+            "The path that has the most risk"
+          ],
+          "correct_answer_index": 1,
+          "explanation": "The critical path is the sequence of dependent tasks that determine the shortest possible duration of a project. Any delay in critical path tasks will delay the entire project."
+        },
+        {
+          "question_text": "What is the purpose of a project kickoff meeting?",
+          "options": [
+            "To celebrate the start of a new project",
+            "To assign blame for previous project failures",
+            "To introduce team members, clarify roles, and align on project goals and expectations",
+            "To create a detailed project schedule"
+          ],
+          "correct_answer_index": 2,
+          "explanation": "A project kickoff meeting brings together the team to align on the project's purpose, goals, roles, and expectations, setting the foundation for successful collaboration."
+        },
+        {
+          "question_text": "How should a project manager address scope creep?",
+          "options": [
+            "Automatically reject all change requests",
+            "Accept all changes to keep stakeholders happy",
+            "Evaluate change requests through a formal change control process considering impact on time, cost, and quality",
+            "Refer all changes to senior management"
+          ],
+          "correct_answer_index": 2,
+          "explanation": "A proper change control process ensures that potential changes are evaluated for their impact on the project constraints before being approved or rejected."
+        }
+      ]
+    }
+  ]

@@ -1,0 +1,76 @@
+[
+    {
+      "username": "johndoe",
+      "email": "john.doe@example.com",
+      "full_name": "John Doe",
+      "department": "Engineering",
+      "title": "Software Engineer",
+      "bio": "Experienced software engineer with a passion for building scalable applications.",
+      "skills": [
+        {"skill_id": 11, "proficiency_level": 5, "is_verified": true, "source": "assessment"},
+        {"skill_id": 12, "proficiency_level": 4, "is_verified": true, "source": "manager"},
+        {"skill_id": 13, "proficiency_level": 3, "is_verified": true, "source": "assessment"},
+        {"skill_id": 14, "proficiency_level": 4, "is_verified": false, "source": "self-assessment"},
+        {"skill_id": 6, "proficiency_level": 4, "is_verified": true, "source": "assessment"}
+      ]
+    },
+    {
+      "username": "janesmith",
+      "email": "jane.smith@example.com",
+      "full_name": "Jane Smith",
+      "department": "Marketing",
+      "title": "Marketing Manager",
+      "bio": "Creative marketing professional with expertise in digital campaigns.",
+      "skills": [
+        {"skill_id": 2, "proficiency_level": 5, "is_verified": true, "source": "assessment"},
+        {"skill_id": 4, "proficiency_level": 4, "is_verified": true, "source": "peer"},
+        {"skill_id": 15, "proficiency_level": 4, "is_verified": true, "source": "manager"},
+        {"skill_id": 16, "proficiency_level": 3, "is_verified": false, "source": "self-assessment"}
+      ]
+    },
+    {
+      "username": "robertjohnson",
+      "email": "robert.johnson@example.com",
+      "full_name": "Robert Johnson",
+      "department": "Operations",
+      "title": "Project Manager",
+      "bio": "Certified project manager with experience in agile methodologies.",
+      "skills": [
+        {"skill_id": 18, "proficiency_level": 5, "is_verified": true, "source": "assessment"},
+        {"skill_id": 19, "proficiency_level": 4, "is_verified": true, "source": "manager"},
+        {"skill_id": 20, "proficiency_level": 4, "is_verified": true, "source": "assessment"},
+        {"skill_id": 15, "proficiency_level": 4, "is_verified": true, "source": "assessment"},
+        {"skill_id": 17, "proficiency_level": 3, "is_verified": false, "source": "self-assessment"}
+      ]
+    },
+    {
+      "username": "sarahlee",
+      "email": "sarah.lee@example.com",
+      "full_name": "Sarah Lee",
+      "department": "Data Science",
+      "title": "Data Scientist",
+      "bio": "Data scientist with expertise in machine learning and statistical analysis.",
+      "skills": [
+        {"skill_id": 11, "proficiency_level": 4, "is_verified": true, "source": "assessment"},
+        {"skill_id": 12, "proficiency_level": 5, "is_verified": true, "source": "manager"},
+        {"skill_id": 8, "proficiency_level": 5, "is_verified": true, "source": "assessment"},
+        {"skill_id": 9, "proficiency_level": 4, "is_verified": true, "source": "assessment"},
+        {"skill_id": 6, "proficiency_level": 5, "is_verified": true, "source": "assessment"}
+      ]
+    },
+    {
+      "username": "michaelbrown",
+      "email": "michael.brown@example.com",
+      "full_name": "Michael Brown",
+      "department": "Sales",
+      "title": "Sales Director",
+      "bio": "Sales director with a track record of exceeding targets.",
+      "skills": [
+        {"skill_id": 1, "proficiency_level": 5, "is_verified": true, "source": "assessment"},
+        {"skill_id": 2, "proficiency_level": 5, "is_verified": true, "source": "manager"},
+        {"skill_id": 5, "proficiency_level": 4, "is_verified": true, "source": "assessment"},
+        {"skill_id": 15, "proficiency_level": 4, "is_verified": true, "source": "manager"},
+        {"skill_id": 16, "proficiency_level": 4, "is_verified": true, "source": "assessment"}
+      ]
+    }
+  ]
