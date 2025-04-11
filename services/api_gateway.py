@@ -11,7 +11,7 @@ import logging
 import time
 from datetime import datetime
 
-from .auth import get_current_user, oauth2_scheme
+from services.auth import get_current_user, oauth2_scheme
 
 app = FastAPI(
     title="Skills Based Organization - API Gateway",

@@ -6,10 +6,11 @@ from typing import List, Dict, Any
 import httpx
 import os
 import logging
+from services import models
+from services import schemas
 
-from .database import get_db, engine
-from . import models, schemas
-from .mock_data import generate_mock_job_roles
+from services.database import get_db, engine
+from services.mock_data import generate_mock_job_roles
 
 # Initialize database
 models.Base.metadata.create_all(bind=engine)

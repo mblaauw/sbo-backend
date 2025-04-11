@@ -8,11 +8,10 @@ import httpx
 import logging
 from datetime import datetime
 import json
+from services import models
+from services import schemas
 
-from . import models
-
-from .database import get_db, engine
-from . import models, schemas
+from services.database import get_db, engine
 
 # Initialize database
 models.Base.metadata.create_all(bind=engine)

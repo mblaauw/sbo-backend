@@ -1,110 +1,190 @@
 #!/usr/bin/env python3
 """
-Development script to run all SBO services locally
+Development script to run SBO microservices for local development.
 """
 
-import subprocess
-import time
 import os
-import signal
 import sys
+import argparse
+import subprocess
+import signal
+import logging
 from concurrent.futures import ThreadPoolExecutor
 
-# Service configurations - updated for services/ directory structure
-services = [
-    {"name": "skills_service", "port": 8801, "module": "services.skills_service.main:app"},
-    {"name": "matching_service", "port": 8802, "module": "services.matching_service.main:app"},
-    {"name": "user_service", "port": 8803, "module": "services.user_service.main:app"},
-    {"name": "assessment_service", "port": 8804, "module": "services.assessment_service.main:app"},
-    {"name": "llm_service", "port": 8805, "module": "services.llm_service.main:app"},
-    {"name": "api_gateway", "port": 8800, "module": "services.api_gateway.main:app"},
-]
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger("run_dev")
 
-# Environment variables for inter-service communication
-env_vars = {
-    "SKILLS_SERVICE_URL": "http://localhost:8801",
-    "MATCHING_SERVICE_URL": "http://localhost:8802",
-    "USER_SERVICE_URL": "http://localhost:8803",
-    "ASSESSMENT_SERVICE_URL": "http://localhost:8804",
-    "LLM_SERVICE_URL": "http://localhost:8805",
-    "API_GATEWAY_URL": "http://localhost:8800",
-    "DATABASE_URL": "sqlite:///./data/sbo.db",  # Use a data directory
-    "JWT_SECRET_KEY": "dev_secret_key",
-    "PYTHONPATH": os.path.dirname(os.path.abspath(__file__))  # Add project root to PYTHONPATH
+# Define services and their ports
+SERVICES = {
+    "skills": {
+        "module": "services.skills_service",
+        "port": 8801
+    },
+    "matching": {
+        "module": "services.matching_service",
+        "port": 8802
+    },
+    "user": {
+        "module": "services.user_service",
+        "port": 8803
+    },
+    "assessment": {
+        "module": "services.assessment_service",
+        "port": 8804
+    },
+    "llm": {
+        "module": "services.llm_service",
+        "port": 8805
+    },
+    "api": {
+        "module": "services.api_gateway",
+        "port": 8800
+    }
 }
 
-# Global list to track processes
-processes = []
+# Default environment variables
+DEFAULT_ENV = {
+    "DATABASE_URL": "sqlite:///./sbo_dev.db",
+    "JWT_SECRET_KEY": "dev_secret_key",
+    "LLM_API_KEY": "dummy-key-for-development"
+}
 
-def handle_exit(signum, frame):
-    """Handle exit signals by stopping all processes"""
-    print("\nStopping all services...")
-    for p in processes:
-        p.terminate()
-    
-    # Wait for all processes to terminate
-    for p in processes:
-        p.wait()
-    
-    print("All services stopped")
-    sys.exit(0)
+# Store process handles
+processes = {}
 
-def run_service(service):
-    """Run a service using uvicorn"""
-    # Extract service name from module path
-    service_name = service["module"].split(".")[1]
+def start_service(service_name, debug=False):
+    """Start a single service with uvicorn"""
+    service = SERVICES.get(service_name)
+    if not service:
+        logger.error(f"Unknown service: {service_name}")
+        return
+
+    port = service["port"]
+    module = service["module"]
     
-    # Get service directory
-    service_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "services")
+    # Prepare environment variables
+    env = os.environ.copy()
     
-    # Create module name relative to service directory
-    module = f"{service_name}.main:app"
-    
+    # Add default environment variables if not already set
+    for key, value in DEFAULT_ENV.items():
+        if key not in env:
+            env[key] = value
+
+    # Add service URLs based on ports
+    for svc_name, svc_config in SERVICES.items():
+        url_var = f"{svc_name.upper()}_SERVICE_URL"
+        if url_var not in env:
+            env[url_var] = f"http://localhost:{svc_config['port']}"
+
+    # Command to run the service
     cmd = [
         "uvicorn",
-        module,
+        f"{module}:app",
         "--host", "0.0.0.0",
-        "--port", str(service["port"]),
-        "--reload",
-        "--app-dir", service_dir
+        "--port", str(port),
+        "--reload"
     ]
     
-    env = os.environ.copy()
-    env.update(env_vars)
+    if debug:
+        cmd.append("--log-level=debug")
     
-    print(f"Starting {service['name']} on port {service['port']}...")
-    return subprocess.Popen(cmd, env=env)
+    logger.info(f"Starting {service_name} service on port {port}")
+    
+    # Start the process
+    process = subprocess.Popen(
+        cmd,
+        env=env,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        universal_newlines=True,
+        bufsize=1
+    )
+    
+    # Store the process handle
+    processes[service_name] = process
+    
+    # Read and log output
+    for line in iter(process.stdout.readline, ''):
+        print(f"[{service_name.upper()}] {line}", end='')
+    
+    process.stdout.close()
+    return_code = process.wait()
+    if return_code:
+        logger.error(f"{service_name} service exited with return code {return_code}")
+    else:
+        logger.info(f"{service_name} service stopped")
 
-def main():
-    """Run all services in parallel"""
-    global processes
+def start_services(service_names, debug=False):
+    """Start multiple services in parallel"""
+    with ThreadPoolExecutor(max_workers=len(service_names)) as executor:
+        for service_name in service_names:
+            executor.submit(start_service, service_name, debug)
+
+def stop_services():
+    """Stop all running services"""
+    for service_name, process in processes.items():
+        logger.info(f"Stopping {service_name} service")
+        process.send_signal(signal.SIGINT)
     
-    # Register signal handlers
-    signal.signal(signal.SIGINT, handle_exit)
-    signal.signal(signal.SIGTERM, handle_exit)
-    
-    # Ensure data directory exists
-    os.makedirs("data", exist_ok=True)
-    
-    print("Starting all SBO services in development mode...")
-    print(f"Project root: {os.path.dirname(os.path.abspath(__file__))}")
-    
-    with ThreadPoolExecutor(max_workers=len(services)) as executor:
-        processes = list(executor.map(run_service, services))
-    
-    # Give services time to start
-    time.sleep(2)
-    
-    print("\nAll services started!")
-    print("Access API Gateway at http://localhost:8800")
-    print("Press Ctrl+C to stop all services")
-    
-    try:
-        # Keep the script running
-        while True:
-            time.sleep(1)
-    except KeyboardInterrupt:
-        handle_exit(None, None)
+    # Wait for processes to terminate
+    for service_name, process in processes.items():
+        try:
+            process.wait(timeout=5)
+            logger.info(f"{service_name} service stopped")
+        except subprocess.TimeoutExpired:
+            logger.warning(f"{service_name} service did not stop gracefully, killing")
+            process.kill()
+
+def handle_interrupt(signum, frame):
+    """Handle interrupt signal (Ctrl+C)"""
+    logger.info("Interrupt received, stopping services")
+    stop_services()
+    sys.exit(0)
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Run SBO services for development")
+    parser.add_argument(
+        "services", 
+        nargs="*", 
+        default=list(SERVICES.keys()),
+        help="Services to run (default: all)"
+    )
+    parser.add_argument(
+        "--debug", 
+        action="store_true", 
+        help="Enable debug logging"
+    )
+    parser.add_argument(
+        "--db", 
+        help="Database URL (default: sqlite:///./sbo_dev.db)"
+    )
+    
+    args = parser.parse_args()
+    
+    # Set database URL if provided
+    if args.db:
+        DEFAULT_ENV["DATABASE_URL"] = args.db
+    
+    # Validate services
+    invalid_services = [s for s in args.services if s not in SERVICES]
+    if invalid_services:
+        logger.error(f"Unknown services: {', '.join(invalid_services)}")
+        logger.info(f"Available services: {', '.join(SERVICES.keys())}")
+        sys.exit(1)
+    
+    # Register signal handler
+    signal.signal(signal.SIGINT, handle_interrupt)
+    signal.signal(signal.SIGTERM, handle_interrupt)
+    
+    try:
+        # Start requested services
+        logger.info(f"Starting services: {', '.join(args.services)}")
+        start_services(args.services, args.debug)
+    except KeyboardInterrupt:
+        logger.info("Keyboard interrupt received")
+    finally:
+        stop_services()

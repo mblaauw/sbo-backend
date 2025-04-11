@@ -7,10 +7,11 @@ import httpx
 import os
 import logging
 from datetime import datetime
+from services import models
+from services import schemas
 
-from .database import get_db, engine
-from . import models, schemas
-from .mock_data import generate_mock_assessments
+from services.database import get_db, engine
+from services.mock_data import generate_mock_assessments
 
 # Initialize database
 models.Base.metadata.create_all(bind=engine)
