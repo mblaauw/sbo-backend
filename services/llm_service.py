@@ -10,11 +10,25 @@ from datetime import datetime
 import json
 from services import models
 from services import schemas
-
 from services.database import get_db, engine
+# Import the LLM model functions
+from services.llm_models import (
+    extract_skills_from_text,
+    map_skills_to_taxonomy,
+    generate_assessment_questions,
+    analyze_resume,
+    generate_learning_path
+)
 
 # Initialize database
 models.Base.metadata.create_all(bind=engine)
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger("llm-service")
 
 app = FastAPI(
     title="Skills Based Organization - LLM Service",
@@ -34,9 +48,14 @@ app.add_middleware(
 # Skills Service URL
 SKILLS_SERVICE_URL = os.getenv("SKILLS_SERVICE_URL", "http://localhost:8801")
 
+# Health check endpoint
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy", "service": "llm-service"}
+
 # Endpoint to extract skills from text
 @app.post("/extract-skills", response_model=List[schemas.ExtractedSkill])
-async def extract_skills_from_text(
+async def extract_skills_endpoint(
     text_data: schemas.TextData,
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db)
@@ -50,8 +69,8 @@ async def extract_skills_from_text(
     )
     
     try:
-        # Call our LLM client to extract skills
-        extracted = models.extract_skills_from_text(text_data.text)
+        # Call our LLM function to extract skills
+        extracted = extract_skills_from_text(text_data.text)
         
         # Log the successful response
         background_tasks.add_task(
@@ -63,7 +82,7 @@ async def extract_skills_from_text(
         
         return extracted
     except Exception as e:
-        logging.error(f"Error extracting skills: {str(e)}")
+        logger.error(f"Error extracting skills: {str(e)}")
         # Log the error
         background_tasks.add_task(
             log_llm_error, 
@@ -75,7 +94,7 @@ async def extract_skills_from_text(
 
 # Endpoint to map free-text skills to taxonomy
 @app.post("/map-skills", response_model=List[schemas.MappedSkill])
-async def map_skills_to_taxonomy(
+async def map_skills_endpoint(
     mapping_request: schemas.MappingRequest,
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db)
@@ -89,8 +108,8 @@ async def map_skills_to_taxonomy(
     )
     
     try:
-        # Call our LLM client to map skills
-        mapped = models.map_skills_to_taxonomy(
+        # Call our LLM function to map skills
+        mapped = map_skills_to_taxonomy(
             mapping_request.skills, 
             mapping_request.taxonomy
         )
@@ -105,7 +124,7 @@ async def map_skills_to_taxonomy(
         
         return mapped
     except Exception as e:
-        logging.error(f"Error mapping skills: {str(e)}")
+        logger.error(f"Error mapping skills: {str(e)}")
         # Log the error
         background_tasks.add_task(
             log_llm_error, 
@@ -117,7 +136,7 @@ async def map_skills_to_taxonomy(
 
 # Endpoint to generate assessment questions for a skill
 @app.post("/generate-assessment", response_model=schemas.AssessmentQuestions)
-async def generate_assessment_questions(
+async def generate_assessment_endpoint(
     assessment_request: schemas.AssessmentRequest,
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db)
@@ -140,14 +159,14 @@ async def generate_assessment_questions(
                     if response.status_code == 200:
                         skill_info = response.json()
             except httpx.RequestError as e:
-                logging.warning(f"Could not fetch skill info: {str(e)}")
+                logger.warning(f"Could not fetch skill info: {str(e)}")
         
         # Use the skill information or the provided skill name
         skill_name = skill_info["name"] if skill_info else assessment_request.skill_name
         skill_description = skill_info["description"] if skill_info else assessment_request.skill_description
         
-        # Call our LLM client to generate assessment questions
-        questions = models.generate_assessment_questions(
+        # Call our LLM function to generate assessment questions
+        questions = generate_assessment_questions(
             skill_name,
             skill_description,
             assessment_request.num_questions,
@@ -168,7 +187,7 @@ async def generate_assessment_questions(
             questions=questions
         )
     except Exception as e:
-        logging.error(f"Error generating assessment: {str(e)}")
+        logger.error(f"Error generating assessment: {str(e)}")
         # Log the error
         background_tasks.add_task(
             log_llm_error, 
@@ -180,7 +199,7 @@ async def generate_assessment_questions(
 
 # Endpoint to analyze a resume and extract skills
 @app.post("/analyze-resume", response_model=schemas.ResumeAnalysis)
-async def analyze_resume(
+async def analyze_resume_endpoint(
     resume_data: schemas.ResumeData,
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db)
@@ -194,8 +213,8 @@ async def analyze_resume(
     )
     
     try:
-        # Call our LLM client to analyze the resume
-        analysis = models.analyze_resume(resume_data.text)
+        # Call our LLM function to analyze the resume
+        analysis = analyze_resume(resume_data.text)
         
         # Log the successful response
         background_tasks.add_task(
@@ -210,7 +229,7 @@ async def analyze_resume(
         
         return schemas.ResumeAnalysis(**analysis)
     except Exception as e:
-        logging.error(f"Error analyzing resume: {str(e)}")
+        logger.error(f"Error analyzing resume: {str(e)}")
         # Log the error
         background_tasks.add_task(
             log_llm_error, 
@@ -222,7 +241,7 @@ async def analyze_resume(
 
 # Endpoint to generate a personalized learning path
 @app.post("/generate-learning-path", response_model=schemas.LearningPath)
-async def generate_learning_path(
+async def generate_learning_path_endpoint(
     path_request: schemas.LearningPathRequest,
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db)
@@ -236,8 +255,8 @@ async def generate_learning_path(
     )
     
     try:
-        # Call our LLM client to generate a learning path
-        learning_path = models.generate_learning_path(
+        # Call our LLM function to generate a learning path
+        learning_path = generate_learning_path(
             path_request.user_id,
             path_request.target_skills,
             path_request.current_skills,
@@ -254,7 +273,7 @@ async def generate_learning_path(
         
         return schemas.LearningPath(**learning_path)
     except Exception as e:
-        logging.error(f"Error generating learning path: {str(e)}")
+        logger.error(f"Error generating learning path: {str(e)}")
         # Log the error
         background_tasks.add_task(
             log_llm_error, 
@@ -291,4 +310,3 @@ async def log_llm_error(db: Session, request_type: str, error_msg: str):
     )
     db.add(db_log)
     db.commit()
-

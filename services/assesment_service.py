@@ -16,6 +16,13 @@ from services.mock_data import generate_mock_assessments
 # Initialize database
 models.Base.metadata.create_all(bind=engine)
 
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger("assessment-service")
+
 app = FastAPI(
     title="Skills Based Organization - Assessment Service",
     description="Service for managing skills assessments",
@@ -40,7 +47,7 @@ LLM_SERVICE_URL = os.getenv("LLM_SERVICE_URL", "http://localhost:8805")
 async def startup_event():
     db = next(get_db())
     if db.query(models.Assessment).count() == 0:
-        logging.info("Initializing database with mock assessments")
+        logger.info("Initializing database with mock assessments")
         assessments = generate_mock_assessments()
         for assessment in assessments:
             db_assessment = models.Assessment(
@@ -133,7 +140,8 @@ async def create_assessment(
             if response.status_code != 200:
                 raise HTTPException(status_code=404, detail="Skill not found")
             skill = response.json()
-    except httpx.RequestError:
+    except httpx.RequestError as e:
+        logger.warning(f"Skills service unavailable: {str(e)}")
         # For prototype, we'll assume the skill exists if Skills Service is unavailable
         skill = {"id": assessment_create.skill_id, "name": f"Skill {assessment_create.skill_id}"}
     
@@ -171,83 +179,6 @@ async def create_assessment(
         db.commit()
     
     return db_assessment
-
-# Endpoint to submit assessment answers and get results
-@app.post("/assessments/{assessment_id}/submit", response_model=schemas.AssessmentResult)
-def submit_assessment(
-    assessment_id: int,
-    submission: schemas.AssessmentSubmission,
-    db: Session = Depends(get_db)
-):
-    # Check if assessment exists
-    assessment = db.query(models.Assessment).filter(models.Assessment.id == assessment_id).first()
-    if not assessment:
-        raise HTTPException(status_code=404, detail="Assessment not found")
-    
-    # Get questions for this assessment
-    questions = db.query(models.AssessmentQuestion).filter(
-        models.AssessmentQuestion.assessment_id == assessment_id
-    ).all()
-    
-    if len(questions) == 0:
-        raise HTTPException(status_code=400, detail="Assessment has no questions")
-    
-    # Create a map of question IDs to correct answers
-    correct_answers = {q.id: q.correct_answer_index for q in questions}
-    
-    # Calculate score
-    num_correct = 0
-    question_results = []
-    
-    for answer in submission.answers:
-        if answer.question_id not in correct_answers:
-            raise HTTPException(status_code=400, detail=f"Question ID {answer.question_id} not found in assessment")
-        
-        is_correct = answer.selected_option_index == correct_answers[answer.question_id]
-        
-        if is_correct:
-            num_correct += 1
-        
-        question_results.append(schemas.QuestionResult(
-            question_id=answer.question_id,
-            is_correct=is_correct,
-            correct_answer_index=correct_answers[answer.question_id]
-        ))
-    
-    # Calculate percentage score
-    percentage_score = (num_correct / len(questions)) * 100 if questions else 0
-    
-    # Determine proficiency level based on score
-    proficiency_level = 1  # Default to lowest level
-    if percentage_score >= 90:
-        proficiency_level = 5
-    elif percentage_score >= 80:
-        proficiency_level = 4
-    elif percentage_score >= 70:
-        proficiency_level = 3
-    elif percentage_score >= 60:
-        proficiency_level = 2
-    
-    # Save assessment result
-    db_result = models.AssessmentResult(
-        assessment_id=assessment_id,
-        user_id=submission.user_id,
-        score=percentage_score,
-        proficiency_level=proficiency_level,
-        completed_at=datetime.now()
-    )
-    db.add(db_result)
-    db.commit()
-    
-    return schemas.AssessmentResult(
-        id=db_result.id,
-        assessment_id=assessment_id,
-        user_id=submission.user_id,
-        score=percentage_score,
-        proficiency_level=proficiency_level,
-        question_results=question_results,
-        completed_at=db_result.completed_at
-    )
 
 # Endpoint to get assessment results for a user
 @app.get("/users/{user_id}/assessment-results", response_model=List[schemas.AssessmentResultSummary])
@@ -329,11 +260,11 @@ async def generate_and_add_questions(
                     db.add(db_question)
                 
                 db.commit()
-                logging.info(f"Successfully generated and added {len(assessment_questions['questions'])} questions for assessment {assessment_id}")
+                logger.info(f"Successfully generated and added {len(assessment_questions['questions'])} questions for assessment {assessment_id}")
             else:
-                logging.error(f"Failed to generate questions from LLM Service: {response.text}")
+                logger.error(f"Failed to generate questions from LLM Service: {response.text}")
     except Exception as e:
-        logging.error(f"Error generating questions: {str(e)}")
+        logger.error(f"Error generating questions: {str(e)}")
         # Add default questions as fallback
         default_questions = [
             {
@@ -361,4 +292,82 @@ async def generate_and_add_questions(
             db.add(db_question)
         
         db.commit()
-        logging.info(f"Added default questions for assessment {assessment_id} due to error")
+        logger.info(f"Added default questions for assessment {assessment_id} due to error")
+
+# Endpoint to submit assessment answers and get results
+@app.post("/assessments/{assessment_id}/submit", response_model=schemas.AssessmentResult)
+def submit_assessment(
+    assessment_id: int,
+    submission: schemas.AssessmentSubmission,
+    db: Session = Depends(get_db)
+):
+    # Check if assessment exists
+    assessment = db.query(models.Assessment).filter(models.Assessment.id == assessment_id).first()
+    if not assessment:
+        raise HTTPException(status_code=404, detail="Assessment not found")
+    
+    # Get questions for this assessment
+    questions = db.query(models.AssessmentQuestion).filter(
+        models.AssessmentQuestion.assessment_id == assessment_id
+    ).all()
+    
+    if len(questions) == 0:
+        raise HTTPException(status_code=400, detail="Assessment has no questions")
+    
+    # Create a map of question IDs to correct answers
+    correct_answers = {q.id: q.correct_answer_index for q in questions}
+    
+    # Calculate score
+    num_correct = 0
+    question_results = []
+    
+    for answer in submission.answers:
+        if answer.question_id not in correct_answers:
+            raise HTTPException(status_code=400, detail=f"Question ID {answer.question_id} not found in assessment")
+        
+        is_correct = answer.selected_option_index == correct_answers[answer.question_id]
+        
+        if is_correct:
+            num_correct += 1
+        
+        question_results.append(schemas.QuestionResult(
+            question_id=answer.question_id,
+            is_correct=is_correct,
+            correct_answer_index=correct_answers[answer.question_id]
+        ))
+    
+    # Calculate percentage score
+    percentage_score = (num_correct / len(questions)) * 100 if questions else 0
+    
+    # Determine proficiency level based on score
+    proficiency_level = 1  # Default to lowest level
+    if percentage_score >= 90:
+        proficiency_level = 5
+    elif percentage_score >= 80:
+        proficiency_level = 4
+    elif percentage_score >= 70:
+        proficiency_level = 3
+    elif percentage_score >= 60:
+        proficiency_level = 2
+    
+    # Save assessment result
+    db_result = models.AssessmentResult(
+        assessment_id=assessment_id,
+        user_id=submission.user_id,
+        score=percentage_score,
+        proficiency_level=proficiency_level,
+        completed_at=datetime.now()
+    )
+    db.add(db_result)
+    db.commit()
+    db.refresh(db_result)
+    
+    return schemas.AssessmentResult(
+        id=db_result.id,
+        assessment_id=assessment_id,
+        user_id=submission.user_id,
+        score=percentage_score,
+        proficiency_level=proficiency_level,
+        question_results=question_results,
+        completed_at=db_result.completed_at
+    )
