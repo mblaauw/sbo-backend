@@ -5,7 +5,6 @@ Authentication endpoints for SBO application.
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
-from typing import List, Dict, Any
 
 from database import get_db
 from middleware import create_access_token
@@ -28,7 +27,7 @@ def login_for_access_token(form_data: TokenRequest, db: Session = Depends(get_db
             detail="Incorrect password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
+
     # Find user or use default
     user = db.query(UserModel).filter(UserModel.username == form_data.username).first()
     if not user:
@@ -37,18 +36,18 @@ def login_for_access_token(form_data: TokenRequest, db: Session = Depends(get_db
     else:
         user_id = str(user.id)
         user_role = "admin" if form_data.username == "admin" else "user"
-    
+
     # Create access token with user ID, role, and scopes
     scopes = ["user"]
     if user_role == "admin":
         scopes.extend(["admin", "skills", "assessments", "matches"])
-    
+
     access_token = create_access_token(
         data={
-            "sub": user_id, 
+            "sub": user_id,
             "role": user_role,
             "scopes": scopes
         }
     )
-    
+
     return {"access_token": access_token, "token_type": "bearer"}

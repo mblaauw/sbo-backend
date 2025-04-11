@@ -18,20 +18,20 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 
 from config import get_settings
-from database import get_db, init_db, get_db_context
-from middleware import setup_middleware, get_current_user, admin_required, User, oauth2_scheme
+from database import get_db, init_db
+from middleware import setup_middleware, get_current_user, admin_required, User
 import schemas
-import models
+
 from models import (
-    Base, SkillCategory, Skill, User as UserModel, UserSkill, JobRole, 
-    RoleSkillRequirement, MatchHistory, Assessment, AssessmentQuestion, 
-    AssessmentResult, LLMRequestLog, LLMResponseLog, LLMErrorLog
+    Base, SkillCategory, Skill, User as UserModel, UserSkill, JobRole,
+    RoleSkillRequirement, Assessment, AssessmentQuestion,
+    LLMRequestLog, LLMResponseLog, LLMErrorLog
 )
 
 # Import mock_data module but avoid circular imports
 # Only import the data loading functions here
 from mock_data import (
-    get_mock_skills_taxonomy, get_mock_users, get_mock_job_roles, 
+    get_mock_skills_taxonomy, get_mock_users, get_mock_job_roles,
     get_mock_assessments
 )
 
@@ -120,9 +120,9 @@ def analyze_resume(resume_text: str) -> Dict[str, Any]:
     return impl(resume_text)
 
 def generate_learning_path(
-    user_id: int, 
-    target_skills: List[Dict[str, Any]], 
-    current_skills: List[Dict[str, Any]], 
+    user_id: int,
+    target_skills: List[Dict[str, Any]],
+    current_skills: List[Dict[str, Any]],
     time_frame: Optional[str] = None
 ) -> Dict[str, Any]:
     """Generate a mock personalized learning path"""
@@ -137,7 +137,7 @@ def generate_learning_path(
 async def startup_event():
     """Initialize database tables and load mock data if needed"""
     init_db()
-    
+
     # Initialize with mock data if tables are empty
     db = next(get_db())
     try:
@@ -151,51 +151,51 @@ def init_mock_data_if_needed(db: Session):
     if db.query(Skill).count() == 0:
         logger.info("Initializing database with mock skills taxonomy")
         skills_data = get_mock_skills_taxonomy()
-        
+
         # Add skill categories
         for category in skills_data.get("categories", []):
             db_category = SkillCategory(**category)
             db.add(db_category)
-        
+
         try:
             db.commit()
         except Exception as e:
             logger.error(f"Error adding skill categories: {str(e)}")
             db.rollback()
             return
-        
+
         # Add skills
         for skill in skills_data.get("skills", []):
             db_skill = Skill(**skill)
             db.add(db_skill)
-        
+
         try:
             db.commit()
         except Exception as e:
             logger.error(f"Error adding skills: {str(e)}")
             db.rollback()
             return
-    
+
     # Check if users table is empty
     if db.query(UserModel).count() == 0:
         logger.info("Initializing database with mock users")
         users_data = get_mock_users()
-        
+
         for user_data in users_data:
             # Extract skills before creating user
             skills_data = user_data.pop("skills", [])
-            
+
             # Create user
             db_user = UserModel(**user_data)
             db.add(db_user)
-            
+
             try:
                 db.flush()  # To get the user ID
             except Exception as e:
                 logger.error(f"Error adding user: {str(e)}")
                 db.rollback()
                 return
-            
+
             # Add skills
             for skill_data in skills_data:
                 user_skill = UserSkill(
@@ -203,34 +203,34 @@ def init_mock_data_if_needed(db: Session):
                     **skill_data
                 )
                 db.add(user_skill)
-        
+
         try:
             db.commit()
         except Exception as e:
             logger.error(f"Error adding user skills: {str(e)}")
             db.rollback()
             return
-    
+
     # Check if job roles table is empty
     if db.query(JobRole).count() == 0:
         logger.info("Initializing database with mock job roles")
         roles_data = get_mock_job_roles()
-        
+
         for role_data in roles_data:
             # Extract required skills before creating role
             required_skills = role_data.pop("required_skills", [])
-            
+
             # Create role
             db_role = JobRole(**role_data)
             db.add(db_role)
-            
+
             try:
                 db.flush()  # To get the role ID
             except Exception as e:
                 logger.error(f"Error adding job role: {str(e)}")
                 db.rollback()
                 return
-            
+
             # Add required skills
             for skill_req in required_skills:
                 db_skill_req = RoleSkillRequirement(
@@ -238,34 +238,34 @@ def init_mock_data_if_needed(db: Session):
                     **skill_req
                 )
                 db.add(db_skill_req)
-        
+
         try:
             db.commit()
         except Exception as e:
             logger.error(f"Error adding job role requirements: {str(e)}")
             db.rollback()
             return
-    
+
     # Check if assessments table is empty
     if db.query(Assessment).count() == 0:
         logger.info("Initializing database with mock assessments")
         assessments_data = get_mock_assessments()
-        
+
         for assessment_data in assessments_data:
             # Extract questions before creating assessment
             questions_data = assessment_data.pop("questions", [])
-            
+
             # Create assessment
             db_assessment = Assessment(**assessment_data)
             db.add(db_assessment)
-            
+
             try:
                 db.flush()  # To get the assessment ID
             except Exception as e:
                 logger.error(f"Error adding assessment: {str(e)}")
                 db.rollback()
                 return
-            
+
             # Add questions
             for question_data in questions_data:
                 db_question = AssessmentQuestion(
@@ -273,7 +273,7 @@ def init_mock_data_if_needed(db: Session):
                     **question_data
                 )
                 db.add(db_question)
-        
+
         try:
             db.commit()
         except Exception as e:
@@ -311,7 +311,7 @@ def login_for_access_token(form_data: TokenRequest, db: Session = Depends(get_db
             detail="Incorrect password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
+
     # Find user or use default
     user = db.query(UserModel).filter(UserModel.username == form_data.username).first()
     if not user:
@@ -320,22 +320,22 @@ def login_for_access_token(form_data: TokenRequest, db: Session = Depends(get_db
     else:
         user_id = str(user.id)
         user_role = "admin" if form_data.username == "admin" else "user"
-    
+
     # Create access token with user ID, role, and scopes
     from middleware import create_access_token
-    
+
     scopes = ["user"]
     if user_role == "admin":
         scopes.extend(["admin", "skills", "assessments", "matches"])
-    
+
     access_token = create_access_token(
         data={
-            "sub": user_id, 
+            "sub": user_id,
             "role": user_role,
             "scopes": scopes
         }
     )
-    
+
     return {"access_token": access_token, "token_type": "bearer"}
 
 ####################################
@@ -355,7 +355,7 @@ def get_skill_categories(
 
 @app.get("/api/skills/category/{category_id}", response_model=List[schemas.Skill], tags=["skills"])
 def get_skills_by_category(
-    category_id: int, 
+    category_id: int,
     current_user: User = Security(
         get_current_user_with_scopes,
         scopes=["skills"]
@@ -370,7 +370,7 @@ def get_skills_by_category(
 
 @app.get("/api/skills/{skill_id}", response_model=schemas.Skill, tags=["skills"])
 def get_skill(
-    skill_id: int, 
+    skill_id: int,
     current_user: User = Security(
         get_current_user_with_scopes,
         scopes=["skills"]
@@ -385,8 +385,8 @@ def get_skill(
 
 @app.post("/api/skills", response_model=schemas.Skill, tags=["skills"])
 def create_skill(
-    skill: schemas.SkillCreate, 
-    current_user: User = Depends(admin_required), 
+    skill: schemas.SkillCreate,
+    current_user: User = Depends(admin_required),
     db: Session = Depends(get_db)
 ):
     """Create a new skill"""
@@ -394,11 +394,11 @@ def create_skill(
     category = db.query(SkillCategory).filter(SkillCategory.id == skill.category_id).first()
     if not category:
         raise HTTPException(status_code=404, detail="Category not found")
-    
+
     # Create new skill
     db_skill = Skill(**skill.dict())
     db.add(db_skill)
-    
+
     try:
         db.commit()
         db.refresh(db_skill)
@@ -421,7 +421,7 @@ async def extract_skills_from_text_endpoint(
     """Extract skills from text using LLM"""
     # Create a copy of the DB session for background tasks
     task_db = next(get_db())
-    
+
     # Log the LLM request
     background_tasks.add_task(
         log_llm_request,
@@ -429,11 +429,11 @@ async def extract_skills_from_text_endpoint(
         request_type="extract_skills",
         input_data={"text_length": len(text_data.text)}
     )
-    
+
     try:
         # Extract skills from text
         extracted_skills = extract_skills_from_text(text_data.text)
-        
+
         # Log successful response in background
         background_tasks.add_task(
             log_llm_response,
@@ -441,7 +441,7 @@ async def extract_skills_from_text_endpoint(
             request_type="extract_skills",
             output_data={"skills_found": len(extracted_skills)}
         )
-        
+
         return extracted_skills
     except Exception as e:
         # Log error in background
@@ -470,11 +470,11 @@ async def map_skills_to_taxonomy_endpoint(
     # Get all skills from the database for reference
     db_skills = db.query(Skill).all()
     skill_dict = {skill.name.lower(): skill for skill in db_skills}
-    
+
     # Try exact matching first
     mapped_skills = []
     unmapped_skills = []
-    
+
     for skill in skills_list.skills:
         if skill.lower() in skill_dict:
             db_skill = skill_dict[skill.lower()]
@@ -488,10 +488,10 @@ async def map_skills_to_taxonomy_endpoint(
             )
         else:
             unmapped_skills.append(skill)
-    
+
     # Create a copy of the DB session for background tasks
     task_db = next(get_db())
-    
+
     # Use LLM to map remaining skills
     if unmapped_skills:
         try:
@@ -502,13 +502,13 @@ async def map_skills_to_taxonomy_endpoint(
                 request_type="map_skills",
                 input_data={"skills": unmapped_skills}
             )
-            
+
             # Map skills to taxonomy
             llm_mapped_skills = map_skills_to_taxonomy(
-                unmapped_skills, 
+                unmapped_skills,
                 [s.name for s in db_skills]
             )
-            
+
             # Log successful response
             background_tasks.add_task(
                 log_llm_response,
@@ -516,7 +516,7 @@ async def map_skills_to_taxonomy_endpoint(
                 request_type="map_skills",
                 output_data={"mapped_count": len(llm_mapped_skills)}
             )
-            
+
             mapped_skills.extend(llm_mapped_skills)
         except Exception as e:
             # Log error
@@ -528,12 +528,12 @@ async def map_skills_to_taxonomy_endpoint(
             )
             logger.error(f"Error mapping skills: {str(e)}")
             # Continue with what we have mapped so far
-    
+
     return mapped_skills
 
 @app.get("/api/skills/{skill_id}/related", response_model=List[schemas.RelatedSkill], tags=["skills"])
 def get_related_skills(
-    skill_id: int, 
+    skill_id: int,
     current_user: User = Security(
         get_current_user_with_scopes,
         scopes=["skills"]
@@ -544,13 +544,13 @@ def get_related_skills(
     skill = db.query(Skill).filter(Skill.id == skill_id).first()
     if not skill:
         raise HTTPException(status_code=404, detail="Skill not found")
-    
+
     # Get skills in the same category
     related = db.query(Skill).filter(
         Skill.category_id == skill.category_id,
         Skill.id != skill.id
     ).all()
-    
+
     return [
         schemas.RelatedSkill(
             skill_id=r.id,
@@ -566,23 +566,23 @@ def get_related_skills(
 @app.get("/api/users", response_model=List[schemas.User], tags=["users"])
 def get_all_users(
     department: Optional[str] = None,
-    skip: int = 0, 
-    limit: int = 100, 
+    skip: int = 0,
+    limit: int = 100,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """Get all users with optional filtering"""
     query = db.query(UserModel)
-    
+
     if department:
         query = query.filter(UserModel.department == department)
-    
+
     users = query.offset(skip).limit(limit).all()
     return users
 
 @app.get("/api/users/{user_id}", response_model=schemas.UserDetail, tags=["users"])
 def get_user(
-    user_id: int, 
+    user_id: int,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
@@ -590,10 +590,10 @@ def get_user(
     user = db.query(UserModel).filter(UserModel.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    
+
     # Get user skills
     user_skills = db.query(UserSkill).filter(UserSkill.user_id == user_id).all()
-    
+
     # Get skills details
     skill_details_list = []
     for skill_entry in user_skills:
@@ -601,11 +601,11 @@ def get_user(
         skill = db.query(Skill).filter(Skill.id == skill_entry.skill_id).first()
         if not skill:
             continue  # Skip if skill not found
-            
+
         # Get category details
         category = db.query(SkillCategory).filter(SkillCategory.id == skill.category_id).first()
         category_name = category.name if category else "Uncategorized"
-        
+
         skill_details_list.append(
             schemas.UserSkillDetail(
                 skill_id=skill_entry.skill_id,
@@ -618,7 +618,7 @@ def get_user(
                 last_verified=skill_entry.last_verified
             )
         )
-    
+
     return schemas.UserDetail(
         id=user.id,
         username=user.username,
@@ -633,7 +633,7 @@ def get_user(
 
 @app.post("/api/users", response_model=schemas.User, tags=["users"])
 def create_user(
-    user_create: schemas.UserCreate, 
+    user_create: schemas.UserCreate,
     current_user: User = Security(
         get_current_user_with_scopes,
         scopes=["admin"]
@@ -644,14 +644,14 @@ def create_user(
     # Check if username or email already exists
     if db.query(UserModel).filter(UserModel.username == user_create.username).first():
         raise HTTPException(status_code=400, detail="Username already taken")
-    
+
     if db.query(UserModel).filter(UserModel.email == user_create.email).first():
         raise HTTPException(status_code=400, detail="Email already registered")
-    
+
     # Create new user
     db_user = UserModel(**user_create.dict())
     db.add(db_user)
-    
+
     try:
         db.commit()
         db.refresh(db_user)
@@ -663,8 +663,8 @@ def create_user(
 
 @app.put("/api/users/{user_id}", response_model=schemas.User, tags=["users"])
 def update_user(
-    user_id: int, 
-    user_update: schemas.UserUpdate, 
+    user_id: int,
+    user_update: schemas.UserUpdate,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
@@ -672,16 +672,16 @@ def update_user(
     db_user = db.query(UserModel).filter(UserModel.id == user_id).first()
     if not db_user:
         raise HTTPException(status_code=404, detail="User not found")
-    
+
     # Check if current user has permission (admin or the user themselves)
     if current_user.role != "admin" and current_user.id != str(user_id):
         raise HTTPException(status_code=403, detail="Not authorized to update this user")
-    
+
     # Update user fields if provided
     update_data = user_update.dict(exclude_unset=True)
     for key, value in update_data.items():
         setattr(db_user, key, value)
-    
+
     try:
         db.commit()
         db.refresh(db_user)
@@ -693,7 +693,7 @@ def update_user(
 
 @app.get("/api/users/{user_id}/skills", response_model=List[schemas.UserSkillDetail], tags=["users"])
 async def get_user_skills(
-    user_id: int, 
+    user_id: int,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
@@ -702,10 +702,10 @@ async def get_user_skills(
     user = db.query(UserModel).filter(UserModel.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    
+
     # Get user skills
     user_skills = db.query(UserSkill).filter(UserSkill.user_id == user_id).all()
-    
+
     # Get skills details
     skill_details_list = []
     for skill_entry in user_skills:
@@ -713,11 +713,11 @@ async def get_user_skills(
         skill = db.query(Skill).filter(Skill.id == skill_entry.skill_id).first()
         if not skill:
             continue  # Skip if skill not found
-            
+
         # Get category details
         category = db.query(SkillCategory).filter(SkillCategory.id == skill.category_id).first()
         category_name = category.name if category else "Uncategorized"
-        
+
         skill_details_list.append(
             schemas.UserSkillDetail(
                 skill_id=skill_entry.skill_id,
@@ -730,6 +730,6 @@ async def get_user_skills(
                 last_verified=skill_entry.last_verified
             )
         )
-    
+
     return skill_details_list
 

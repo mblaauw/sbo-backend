@@ -12,7 +12,7 @@ class SkillCategoryCreate(SkillCategoryBase):
 
 class SkillCategory(SkillCategoryBase):
     id: int
-    
+
     class Config:
         from_attributes = True
 
@@ -27,7 +27,7 @@ class SkillCreate(SkillBase):
 
 class Skill(SkillBase):
     id: int
-    
+
     class Config:
         from_attributes = True
 
@@ -76,7 +76,7 @@ class UserUpdate(BaseModel):
 class User(UserBase):
     id: int
     created_at: datetime
-    
+
     class Config:
         from_attributes = True
 
@@ -94,7 +94,7 @@ class UserSkillDetail(UserSkillBase):
     category_id: Optional[int] = None
     category_name: Optional[str] = None
     last_verified: Optional[datetime] = None
-    
+
     class Config:
         from_attributes = True
 
@@ -110,7 +110,7 @@ class UserWithSkill(BaseModel):
     proficiency_level: int
     is_verified: bool
     source: str
-    
+
     class Config:
         from_attributes = True
 
@@ -134,7 +134,7 @@ class JobRoleCreate(JobRoleBase):
 class JobRole(JobRoleBase):
     id: int
     created_at: Optional[datetime] = None
-    
+
     class Config:
         from_attributes = True
 
@@ -212,7 +212,7 @@ class AssessmentQuestionCreate(AssessmentQuestionBase):
 
 class AssessmentQuestionDetail(AssessmentQuestionBase):
     id: int
-    
+
     class Config:
         from_attributes = True
 
@@ -228,7 +228,7 @@ class AssessmentCreate(AssessmentBase):
 class Assessment(AssessmentBase):
     id: int
     created_at: Optional[datetime] = None
-    
+
     class Config:
         from_attributes = True
 
@@ -256,7 +256,7 @@ class AssessmentResult(BaseModel):
     proficiency_level: int
     question_results: List[QuestionResult]
     completed_at: datetime
-    
+
     class Config:
         from_attributes = True
 
@@ -268,7 +268,7 @@ class AssessmentResultSummary(BaseModel):
     score: float
     proficiency_level: int
     completed_at: datetime
-    
+
     class Config:
         from_attributes = True
 
@@ -277,7 +277,7 @@ class UserAssessmentResult(BaseModel):
     score: float
     proficiency_level: int
     completed_at: datetime
-    
+
     class Config:
         from_attributes = True
 

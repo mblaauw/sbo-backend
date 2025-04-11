@@ -4,13 +4,14 @@ This file combines all routes from different services.
 """
 
 import logging
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
+from contextlib import asynccontextmanager
 
 from config import get_settings
 from database import init_db
 from middleware import setup_middleware
 from routes import (
-    auth_routes, skills_routes, user_routes, 
+    auth_routes, skills_routes, user_routes,
     matching_routes, assessment_routes, llm_routes,
     dashboard_routes
 )
@@ -18,11 +19,36 @@ from routes import (
 logger = logging.getLogger("sbo.main")
 settings = get_settings()
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Initialize database and load mock data on startup"""
+    logger.info("Application starting up")
+
+    # Initialize database schema
+    init_db()
+
+    # Import and initialize mock data
+    from init_mock_data import init_mock_data_if_needed
+    from database import get_db
+
+    # Get a database session
+    db = next(get_db())
+    try:
+        # Initialize mock data if needed
+        init_mock_data_if_needed(db)
+    finally:
+        db.close()
+
+    logger.info("Application startup complete")
+    yield
+    # Cleanup code can go here (if any)
+
 # Initialize FastAPI app
 app = FastAPI(
     title="Skills Based Organization API",
     description="API for Skills Based Organization services",
-    version=settings.app_version
+    version=settings.app_version,
+    lifespan=lifespan
 )
 
 # Set up middleware
@@ -45,35 +71,12 @@ async def health_check():
         "version": settings.app_version
     }
 
-# Initialize database and load mock data on startup
-@app.on_event("startup")
-async def startup_event():
-    """Initialize database and load mock data on startup"""
-    logger.info("Application starting up")
-    
-    # Initialize database schema
-    init_db()
-    
-    # Import and initialize mock data
-    from init_mock_data import init_mock_data_if_needed
-    from database import get_db
-    
-    # Get a database session
-    db = next(get_db())
-    try:
-        # Initialize mock data if needed
-        init_mock_data_if_needed(db)
-    finally:
-        db.close()
-    
-    logger.info("Application startup complete")
-
 if __name__ == "__main__":
     import uvicorn
-    
+
     # Get host and port from settings
     host = settings.service.host
     port = settings.service.port
-    
+
     # Run the application
     uvicorn.run("main:app", host=host, port=port, reload=settings.service.debug)

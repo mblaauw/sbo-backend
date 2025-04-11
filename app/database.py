@@ -23,7 +23,7 @@ if engine_url.startswith("sqlite:"):
         engine_url,
         connect_args={"check_same_thread": False}  # Needed for SQLite
     )
-    
+
     # Add pragmas for SQLite
     @event.listens_for(engine, "connect")
     def set_sqlite_pragma(dbapi_connection, connection_record):
@@ -51,7 +51,7 @@ Base = declarative_base()
 def get_db() -> Generator[Session, None, None]:
     """
     FastAPI dependency to get a database session.
-    
+
     Yields:
         SQLAlchemy database session
     """
@@ -65,7 +65,7 @@ def get_db() -> Generator[Session, None, None]:
 def get_db_context() -> Generator[Session, None, None]:
     """
     Context manager for database operations outside of FastAPI endpoints.
-    
+
     Yields:
         SQLAlchemy database session
     """
@@ -74,12 +74,12 @@ def get_db_context() -> Generator[Session, None, None]:
         yield db
     finally:
         db.close()
-        
+
 def init_db() -> None:
     """Initialize database tables"""
     logger.info("Creating database tables")
     Base.metadata.create_all(bind=engine)
-    
+
 def drop_db() -> None:
     """Drop all database tables (use with caution)"""
     logger.warning("Dropping all database tables!")
